@@ -14,8 +14,10 @@ const LoginScreen = ({ onLoginSuccess, onShowSignUp }) => {
     setIsLoading(true);
     setError(null);
 
+    const API_URL = import.meta.env.VITE_API_URL || '';
+
     try {
-      const res = await fetch('/api/users/login', {
+      const res = await fetch(`${API_URL}/api/users/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

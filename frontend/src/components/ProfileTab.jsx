@@ -13,8 +13,9 @@ const ProfileTab = ({ onLogout }) => {
   // Effect to fetch the user's profile data when the component mounts
   useEffect(() => {
     const fetchProfile = async () => {
+      const API_URL = import.meta.env.VITE_API_URL || '';
       try {
-        const res = await fetch('/api/profile/me');
+        const res = await fetch(`${API_URL}/api/profile/me`);
         if (!res.ok) throw new Error('Could not fetch profile.');
         const data = await res.json();
         setFormData({
@@ -54,14 +55,15 @@ const ProfileTab = ({ onLogout }) => {
 
   const handleUpdateProfile = async () => {
     setStatus({ loading: true, error: null, success: null });
+    const API_URL = import.meta.env.VITE_API_URL || '';
     try {
-        await fetch('/api/profile/me', {
+        await fetch(`${API_URL}/api/profile/me`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData),
         });
 
-        await fetch('/api/profile/contacts', {
+        await fetch(`${API_URL}/api/profile/contacts`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ emergencyContacts: contacts }),

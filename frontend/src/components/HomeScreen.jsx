@@ -24,8 +24,10 @@ const HomeScreen = ({ onLogout }) => {
     }
     setSosStatus({ loading: true, error: null, success: null });
 
+    const API_URL = import.meta.env.VITE_API_URL || '';
+
     try {
-      const res = await fetch('/api/alerts/sos', {
+      const res = await fetch(`${API_URL}/api/alerts/sos`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

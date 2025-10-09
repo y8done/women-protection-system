@@ -35,6 +35,8 @@ const SignUpScreen = ({ onSignUpSuccess, onShowLogin }) => {
     setIsLoading(true);
     setError(null);
 
+    const API_URL = import.meta.env.VITE_API_URL || '';
+
     // Basic validation for emergency contacts
     const validContacts = emergencyContacts.filter(c => c.name && c.email);
     if (validContacts.length === 0) {
@@ -44,7 +46,7 @@ const SignUpScreen = ({ onSignUpSuccess, onShowLogin }) => {
     }
 
     try {
-      const res = await fetch('/api/users/register', {
+      const res = await fetch(`${API_URL}/api/users/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
