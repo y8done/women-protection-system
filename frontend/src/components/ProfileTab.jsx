@@ -13,9 +13,12 @@ const ProfileTab = ({ onLogout }) => {
   // Effect to fetch the user's profile data when the component mounts
   useEffect(() => {
     const fetchProfile = async () => {
-      const API_URL = import.meta.env.VITE_API_URL || '';
       try {
-        const res = await fetch(`${API_URL}/api/profile/me`);
+        const res = await fetch(`/api/profile/me`, {
+          method: 'GET',
+          credentials: 'include' // <-- Fix: Added credentials to send the JWT cookie
+        });
+        
         if (!res.ok) throw new Error('Could not fetch profile.');
         const data = await res.json();
         setFormData({
@@ -55,17 +58,20 @@ const ProfileTab = ({ onLogout }) => {
 
   const handleUpdateProfile = async () => {
     setStatus({ loading: true, error: null, success: null });
-    const API_URL = import.meta.env.VITE_API_URL || '';
     try {
-        await fetch(`${API_URL}/api/profile/me`, {
+        // Fix: Added credentials: 'include' to the first PUT request
+        await fetch(`/api/profile/me`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include', 
             body: JSON.stringify(formData),
         });
 
-        await fetch(`${API_URL}/api/profile/contacts`, {
+        // Fix: Added credentials: 'include' to the second PUT request
+        await fetch(`/api/profile/contacts`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify({ emergencyContacts: contacts }),
         });
         
@@ -85,7 +91,6 @@ const ProfileTab = ({ onLogout }) => {
     );
   }
 
-
   return (
     <div className="p-4 sm:p-6">
         <div className="flex justify-between items-center mb-6">
@@ -95,6 +100,12 @@ const ProfileTab = ({ onLogout }) => {
             </button>
         </div>
       
+      {status.error && <p className="text-red-600 mt-4 text-center">{status.error}</p>}
+
+      {!formData ? (
+        <p className="text-red-600 mt-4 text-center">Failed to load profile. Please refresh the page.</p>
+      ) : (
+        <>
       {/* User Details */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 space-y-4">
         <div>
@@ -152,7 +163,8 @@ const ProfileTab = ({ onLogout }) => {
       )}
 
       {status.success && <p className="text-green-600 mt-4 text-center">{status.success}</p>}
-      {status.error && <p className="text-red-600 mt-4 text-center">{status.error}</p>}
+        </>
+      )}
 
       {/* Logout Button */}
       <div className="mt-8">
@@ -165,4 +177,3 @@ const ProfileTab = ({ onLogout }) => {
 };
 
 export default ProfileTab;
-

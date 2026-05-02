@@ -12,7 +12,6 @@ const HotspotFinder = ({ onBack }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const API_URL = import.meta.env.VITE_API_URL || '';
       try {
         // Fetch user's current location
         const position = await new Promise((resolve, reject) => {
@@ -29,7 +28,7 @@ const HotspotFinder = ({ onBack }) => {
         setLocation(userLoc);
 
         // Fetch hotspots from the backend
-        const res = await fetch(`${API_URL}/api/features/hotspots`);
+        const res = await fetch(`/api/features/hotspots`);
         if (!res.ok) throw new Error('Could not fetch hotspots');
         const hotspotData = await res.json();
         setHotspots(hotspotData);

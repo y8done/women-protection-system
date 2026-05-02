@@ -3,7 +3,10 @@ import LoadingScreen from './components/LoadingScreen';
 import LoginScreen from './components/LoginScreen';
 import HomeScreen from './components/HomeScreen';
 import SignUpScreen from './components/SignUpScreen';
+import axios from 'axios';
 
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+axios.defaults.withCredentials = true;
 // --- Main App Component ---
 // This component manages the application state and renders the correct screen.
 function App() {
@@ -46,7 +49,7 @@ function App() {
     if (showLogin) {
       return <LoginScreen onLoginSuccess={handleLoginSuccess} onShowSignUp={showSignUpPage} />;
     } else {
-      return <SignUpScreen onShowLogin={showLoginPage} />;
+      return <SignUpScreen onSignUpSuccess={handleLoginSuccess} onShowLogin={showLoginPage} />;
     }
   }
 

@@ -1,14 +1,15 @@
-import { React, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import BottomNav from './BottomNav.jsx';
 import HomeTab from './HomeTab.jsx';
 import FeaturesTab from './FeaturesTab.jsx';
 import ProfileTab from './ProfileTab.jsx';
 import HotspotFinder from './HotspotFinder.jsx';
-import { useShake } from '../hooks/useShake.js'; // Import the shake hook
+import TrackJourney from './TrackJourney.jsx';
+import { useShake } from '../hooks/useShake.js'; 
 
 const HomeScreen = ({ onLogout }) => {
   const [activeTab, setActiveTab] = useState('home');
-  const [featuresView, setFeaturesView] = useState('menu'); // 'menu' or 'hotspots'
+  const [featuresView, setFeaturesView] = useState('menu'); // 'menu', 'hotspots', or 'trackJourney'
   const [location, setLocation] = useState(null);
   const [locationError, setLocationError] = useState(null);
   const [sosStatus, setSosStatus] = useState({ loading: false, error: null, success: null });
@@ -24,12 +25,11 @@ const HomeScreen = ({ onLogout }) => {
     }
     setSosStatus({ loading: true, error: null, success: null });
 
-    const API_URL = import.meta.env.VITE_API_URL || '';
-
     try {
-      const res = await fetch(`${API_URL}/api/alerts/sos`, {
+      const res = await fetch(`/api/alerts/sos`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           lat: location.lat,
           lng: location.lng,
@@ -73,10 +73,14 @@ const HomeScreen = ({ onLogout }) => {
       case 'home':
         return <HomeTab location={location} locationError={locationError} onSOS={handleSOS} sosStatus={sosStatus} />;
       case 'features':
+        // Navigation logic for the Features Tab
         if (featuresView === 'hotspots') {
           return <HotspotFinder onBack={() => setFeaturesView('menu')} />;
         }
-        return <FeaturesTab onShowHotspotFinder={() => setFeaturesView('hotspots')} />;
+        if (featuresView === 'trackJourney') {
+          return <TrackJourney onBack={() => setFeaturesView('menu')} onTriggerSOS={handleSOS} />;
+        }
+        return <FeaturesTab onShowHotspotFinder={() => setFeaturesView('hotspots')} onShowTrackJourney={() => setFeaturesView('trackJourney')} />;
       case 'profile':
         return <ProfileTab onLogout={onLogout} />;
       default:
@@ -95,4 +99,3 @@ const HomeScreen = ({ onLogout }) => {
 };
 
 export default HomeScreen;
-

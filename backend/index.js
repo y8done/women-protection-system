@@ -24,13 +24,28 @@ const startServer = async () => {
     const app = express();
     const PORT = process.env.PORT || 5001;
 
-    // --- CORS Configuration ---
-    // This is the crucial part. It tells the server to allow requests
-    // specifically from your live frontend URL.
+    const allowedOrigins = [
+      'https://women-protection-client.onrender.com',
+      'http://localhost:5173',
+      'http://localhost:3000'
+    ];
+
     const corsOptions = {
-      origin: 'https://women-protection-client.onrender.com', // Replace if your frontend URL is different
-      credentials: true, // This is important for allowing cookies (JWT)
+      origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or Postman)
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.indexOf(origin) !== -1) {
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
+      },
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization']
     };
+
     app.use(cors(corsOptions));
 
     // Middleware
